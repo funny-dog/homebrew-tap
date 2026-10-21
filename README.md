@@ -6,15 +6,13 @@
 brew install --cask funny-dog/tap/finderright
 ```
 
-此命令安装 GitHub 正式 Release 中的原始 App，并校验下载文件的 SHA-256。当前 App 使用固定自签名证书，未经 Apple 公证；Tap 保留 macOS 隔离属性，不自动解除 Gatekeeper 拦截。
-
-首次打开被拦截时，确认来自上述官方发布，先尝试打开 App，再前往「系统设置 → 隐私与安全性 → 仍要打开」。如选择终端方式，仅删除该 App 的隔离属性：
+此命令安装 GitHub 正式 Release 中的原始 App，并校验下载文件的 SHA-256。当前 App 使用固定自签名证书，未经 Apple 公证；为免去首次打开时的手动放行，Cask 在安装后执行以下命令，仅删除该 App 的隔离属性，macOS 因此不再对它做 Gatekeeper 首次打开检查：
 
 ```bash
 xattr -dr com.apple.quarantine /Applications/FinderRight.app
 ```
 
-启动后仍需按应用引导启用 Finder 扩展，并按需授予完全磁盘访问、辅助功能权限。详细步骤见 [FinderRight 安装指南](https://github.com/funny-dog/FinderRight#-安装)。
+如希望保留系统检查，请改用主项目的 DMG 安装。启动后仍需按应用引导启用 Finder 扩展，并按需授予完全磁盘访问、辅助功能权限。详细步骤见 [FinderRight 安装指南](https://github.com/funny-dog/FinderRight#-安装)。
 
 ## 更新与卸载
 
@@ -25,7 +23,7 @@ brew update
 brew upgrade --cask --greedy funny-dog/tap/finderright
 ```
 
-应用内更新不会同步 Homebrew 的安装版本记录；即使 App 已更新，Homebrew 仍可能按自己的记录重新安装。选择一种更新方式即可。更新后需重启 Finder，以加载新扩展；如系统再次拦截打开，按上述流程放行。
+应用内更新不会同步 Homebrew 的安装版本记录；即使 App 已更新，Homebrew 仍可能按自己的记录重新安装。选择一种更新方式即可。通过 Homebrew 更新同样会删除隔离属性。更新后需重启 Finder，以加载新扩展。
 
 普通卸载保留设置和操作历史：
 
@@ -42,7 +40,7 @@ brew uninstall --cask funny-dog/tap/finderright
 3. 更新 `Casks/finderright.rb` 中的 `version` 和 `sha256`；复核架构、最低系统版本、解压后 App 路径及签名。
 4. 在已 tap 的环境运行 `brew style --cask funny-dog/tap/finderright`、`brew audit --cask funny-dog/tap/finderright` 和 `brew fetch --cask funny-dog/tap/finderright`，通过后提交并推送到 `main`。
 
-个人 Tap 的常规审核不要求通过官方仓库的 Gatekeeper 收录检查。当前自签名版本不应宣称通过 Apple 公证或官方 Cask 的安全审核。
+个人 Tap 的常规审核不要求通过官方仓库的 Gatekeeper 收录检查；官方仓库不接受删除隔离属性的 Cask。当前自签名版本不应宣称通过 Apple 公证或官方 Cask 的安全审核。
 
 ## English
 
@@ -52,9 +50,9 @@ Install FinderRight on an Apple Silicon Mac running macOS 13 or later:
 brew install --cask funny-dog/tap/finderright
 ```
 
-This tap installs the original GitHub release and verifies its SHA-256. FinderRight is self-signed, not Apple-notarized. Quarantine is preserved. If macOS blocks the first launch, try opening the app, then use **System Settings → Privacy & Security → Open Anyway** after checking the download source. Alternatively, remove only this app's quarantine attribute using the `xattr` command above. Enable the Finder extension and grant the required permissions using the app's setup guide.
+This tap installs the original GitHub release and verifies its SHA-256. FinderRight is self-signed, not Apple-notarized. To skip manual first-launch approval, the cask runs the `xattr` command above after installation, removing only this app's quarantine attribute, so macOS does not run the Gatekeeper first-launch check for it. To keep that check, install the DMG from the main project instead. Enable the Finder extension and grant the required permissions using the app's setup guide.
 
-FinderRight can update itself. With `auto_updates true`, normal bulk `brew upgrade` may skip it. For Homebrew-managed updates, quit FinderRight, run `brew update`, then `brew upgrade --cask --greedy funny-dog/tap/finderright`. In-app updates do not update Homebrew's version record, so Homebrew may reinstall an already updated app. Restart Finder after updating to load the new extension, and approve the app again if macOS blocks it.
+FinderRight can update itself. With `auto_updates true`, normal bulk `brew upgrade` may skip it. For Homebrew-managed updates, quit FinderRight, run `brew update`, then `brew upgrade --cask --greedy funny-dog/tap/finderright`. In-app updates do not update Homebrew's version record, so Homebrew may reinstall an already updated app. Homebrew updates also remove the quarantine attribute. Restart Finder after updating to load the new extension.
 
 `brew uninstall --cask funny-dog/tap/finderright` preserves settings and history. Adding `--zap` also deletes settings, operation history and staging files; finish or recover staged files before using it. See the main project for permission cleanup.
 

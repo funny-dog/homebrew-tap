@@ -13,6 +13,11 @@ cask "finderright" do
 
   app "FinderRight.app"
 
+  # 自签名未公证，只删隔离属性，免去首次打开时手动放行
+  postflight_steps do
+    run "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "{{appdir}}/FinderRight.app"]
+  end
+
   zap trash: [
     "~/Library/Application Support/FinderRight",
     "~/Library/Preferences/com.finderright.app.plist",
@@ -20,9 +25,9 @@ cask "finderright" do
 
   caveats <<~EOS
     FinderRight is self-signed and is not notarized by Apple.
-    This cask preserves macOS quarantine and does not bypass Gatekeeper.
-    If the first launch is blocked, try opening the app, then go to:
-      System Settings > Privacy & Security > Open Anyway
+    This cask removes the com.apple.quarantine attribute from
+    FinderRight.app after installation, so macOS does not run the
+    Gatekeeper first-launch check for this app.
 
     Follow the app's setup guide to enable its Finder extension and permissions.
     Full Disk Access is needed for protected folders; Accessibility is needed
@@ -30,7 +35,7 @@ cask "finderright" do
 
     Quit FinderRight before upgrading or reinstalling it with Homebrew.
     After updating, restart Finder to load the new extension.
-    Setup and alternative first-launch instructions:
+    Setup instructions:
       https://github.com/funny-dog/FinderRight#-安装
   EOS
 end
