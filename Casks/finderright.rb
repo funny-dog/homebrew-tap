@@ -1,6 +1,6 @@
 cask "finderright" do
-  version "1.10.2"
-  sha256 "26ee1f1b899112be2c4bf55fbe2344c6e928a435a9c835ad94ea16fb74cf1b87"
+  version "1.10.5"
+  sha256 "0cc4c7ed87a086dc330c414b78c897967a96b67ab413884bc10ed11c2421a1d6"
 
   url "https://github.com/funny-dog/FinderRight/releases/download/v#{version}/FinderRight-v#{version}.zip"
   name "FinderRight"
