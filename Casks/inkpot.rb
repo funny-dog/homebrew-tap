@@ -1,6 +1,6 @@
 cask "inkpot" do
   version "0.1.0"
-  sha256 "72f22a7495138afe14da326165d868162f932749046224769160e84001f5e11b"
+  sha256 "95279f07d7e651e6b47d0861ff241da08e22e3dc6760c95ababa4d338d122ac1"
 
   url "https://github.com/funny-dog/inkpot/releases/download/v#{version}/Inkpot-v#{version}.zip"
   name "Inkpot"
