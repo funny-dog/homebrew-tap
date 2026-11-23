@@ -1,6 +1,6 @@
 # funny-dog Homebrew Tap
 
-个人维护的 Homebrew Tap，用于安装 [FinderRight](https://github.com/funny-dog/FinderRight) 与 [Inkpot](https://github.com/funny-dog/inkpot)。要求已安装 Homebrew；FinderRight 需要 Apple Silicon Mac 和 macOS 13+，Inkpot 需要 macOS 15+。
+个人维护的 Homebrew Tap，用于安装 [FinderRight](https://github.com/funny-dog/FinderRight)、[Inkpot](https://github.com/funny-dog/inkpot) 与 [SwiftFlash](https://github.com/funny-dog/SwiftFlash)。要求已安装 Homebrew；FinderRight 需要 Apple Silicon Mac 和 macOS 13+，Inkpot 需要 macOS 15+，SwiftFlash 需要 Apple Silicon Mac 和 macOS 14+。
 
 ## FinderRight
 
@@ -68,11 +68,42 @@ brew uninstall --cask funny-dog/tap/inkpot
 
 `brew uninstall --cask --zap funny-dog/tap/inkpot` 还会删除设置、缓存与 WebKit 本地数据；卸载与 zap 都不会碰用户的 Markdown 文档本身。
 
+## SwiftFlash
+
+```bash
+brew install --cask funny-dog/tap/swiftflash
+```
+
+此命令安装 GitHub 正式 Release 中的原始 App（Apple Silicon，macOS 14+），并校验下载文件的 SHA-256。SwiftFlash 使用固定自签名证书，未经 Apple 公证；为免去首次打开时的手动放行，Cask 在安装后仅删除该 App 的隔离属性，macOS 因此不再对它做 Gatekeeper 首次打开检查：
+
+```bash
+xattr -dr com.apple.quarantine /Applications/SwiftFlash.app
+```
+
+如希望保留系统检查，请改用主项目 Release 页的 DMG 安装，首次打开在「系统设置 → 隐私与安全性」点「仍要打开」。
+
+### 更新与卸载
+
+升级前先正常退出 SwiftFlash，然后执行：
+
+```bash
+brew update
+brew upgrade --cask funny-dog/tap/swiftflash
+```
+
+普通卸载保留设置及已安装的语言服务器（LSP）工具：
+
+```bash
+brew uninstall --cask funny-dog/tap/swiftflash
+```
+
+`brew uninstall --cask --zap funny-dog/tap/swiftflash` 还会删除 `~/Library/Application Support/SwiftFlash` 与应用偏好设置。
+
 ## 维护 Cask
 
 1. 先发布对应项目的正式 Release，保持现有 ZIP 和 `.sha256` 资产名称及发布签名证书。
-2. 下载对应版本的 `FinderRight-v<版本>.zip` / `Inkpot-v<版本>.zip` 与 `.zip.sha256`，在下载目录运行 `shasum -a 256 -c <资产名>.zip.sha256`。Cask 的 `sha256` 必须对应 ZIP。
-3. 更新 `Casks/finderright.rb` / `Casks/inkpot.rb` 中的 `version` 和 `sha256`；复核架构、最低系统版本、解压后 App 路径及签名。
+2. 下载对应版本的 `FinderRight-v<版本>.zip` / `Inkpot-v<版本>.zip` / `SwiftFlash-v<版本>.zip` 与 `.zip.sha256`，在下载目录运行 `shasum -a 256 -c <资产名>.zip.sha256`。Cask 的 `sha256` 必须对应 ZIP。
+3. 更新 `Casks/finderright.rb` / `Casks/inkpot.rb` / `Casks/swiftflash.rb` 中的 `version` 和 `sha256`；复核架构、最低系统版本、解压后 App 路径及签名。
 4. 在已 tap 的环境运行 `brew style --cask funny-dog/tap/<名称>`、`brew audit --cask funny-dog/tap/<名称>` 和 `brew fetch --cask funny-dog/tap/<名称>`，通过后提交并推送到 `main`。
 
 个人 Tap 的常规审核不要求通过官方仓库的 Gatekeeper 收录检查；官方仓库不接受删除隔离属性的 Cask。当前自签名版本不应宣称通过 Apple 公证或官方 Cask 的安全审核。
@@ -102,5 +133,17 @@ This tap installs the original GitHub release and verifies its SHA-256. Inkpot i
 Inkpot can check for and download updates, but does not install them. Let Homebrew manage installation: run `brew update`, then `brew upgrade --cask inkpot`. Quit Inkpot and save your documents before upgrading. If you manually installed a newer build over `/Applications/Inkpot.app`, run the upgrade command once to realign Homebrew's version record. Homebrew updates also remove the quarantine attribute.
 
 `brew uninstall --cask funny-dog/tap/inkpot` preserves settings and document-recovery data. Adding `--zap` also deletes settings, caches and local WebKit data. Uninstall and zap never touch your Markdown documents.
+
+### SwiftFlash
+
+Install SwiftFlash on an Apple Silicon Mac running macOS 14 or later:
+
+```bash
+brew install --cask funny-dog/tap/swiftflash
+```
+
+This tap installs the original GitHub release and verifies its SHA-256. SwiftFlash is self-signed, not Apple-notarized. To skip manual first-launch approval, the cask removes only `SwiftFlash.app`'s `com.apple.quarantine` attribute after installation, so macOS does not run the Gatekeeper first-launch check for it. To keep that check, install the DMG from the main project's release page instead.
+
+Quit SwiftFlash before upgrading: `brew update && brew upgrade --cask funny-dog/tap/swiftflash`. `brew uninstall --cask funny-dog/tap/swiftflash` preserves settings and managed LSP binaries; adding `--zap` also removes `~/Library/Application Support/SwiftFlash` and preferences.
 
 For a new release, update `version` and the ZIP checksum in the matching `Casks/*.rb` after verifying the published ZIP against its `.sha256` file. Check architecture, minimum macOS, bundle path and signature; run the style, audit and fetch commands above, then commit and push to `main`.
