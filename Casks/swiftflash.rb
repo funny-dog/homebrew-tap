@@ -1,6 +1,6 @@
 cask "swiftflash" do
-  version "1.0.1"
-  sha256 "60285c9496b4f89e5f6b424c7bbebbbb4645e0ca2238ec5b61c8a3365826ebb9"
+  version "1.1.0"
+  sha256 "13da73f960a25e254bf6a6d9e0551cad8c5ee8054355549fada5d8d5626663c4"
 
   url "https://github.com/funny-dog/SwiftFlash/releases/download/v#{version}/SwiftFlash-v#{version}.zip"
   name "SwiftFlash"
